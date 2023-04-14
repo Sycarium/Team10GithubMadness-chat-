@@ -1,18 +1,38 @@
 import openai
-import time
 
-# Set up the OpenAI API client
-openai.api_key = "YOUR_API_KEY_HERE"
+# Set OpenAI API keys
+openai.api_key = "api_key1"
+openai.api_key2 = "api_key2"
+openai.api_key3 = "api_key3"
+openai.api_key4 = "api_key4"
+openai.api_key5 = "api_key5"
+openai.api_key6 = "api_key6"
+
+# Define the EngineManager class to manage different engines for each chatbot
+class EngineManager:
+    def __init__(self):
+        self.engines = {
+            "chatbot1": "TheAverageUser",
+            "chatbot2": "Telepath",
+            "chatbot3": "TheFemChar",
+            "chatbot4": "TheScientist",
+            "chatbot5": "TheWeirdo",
+            "chatbot6": "TheUltimateUser",
+        }
+        
+    def get_engine(self, chatbot_id):
+        return self.engines.get(chatbot_id, "TheAverageUser")
 
 # Define the Chatbot class
 class Chatbot:
-    def __init__(self, id, name, api_key):
+    def __init__(self, id, name, api_key, engine):
         self.id = id
         self.name = name
         self.conversation_history = ""
         self.active = False
         self.api_key = api_key
-
+        self.engine = engine
+        
     def generate_response(self, user_input):
         # Get the conversation history for this chatbot
         history = self.conversation_history
@@ -20,17 +40,15 @@ class Chatbot:
         # Concatenate the user input and conversation history into a prompt
         prompt = history + user_input
 
-        # Set up the OpenAI API client for this chatbot's API key
-        openai.api_key = self.api_key
-
-        # Generate a response from the OpenAI API
+        # Generate a response from the OpenAI API using the appropriate engine for this chatbot
         completions = openai.Completion.create(
-            engine="davinci",
+            engine=self.engine,
             prompt=prompt,
             max_tokens=1024,
             n=1,
             stop=None,
             temperature=0.7,
+            api_key=self.api_key,
         )
 
         # Extract the response from the API output
@@ -41,14 +59,15 @@ class Chatbot:
 
         return message
 
-# Create six instances of Chatbot
+# Create six instances of Chatbot with separate OpenAI API keys and engines
+engine_manager = EngineManager()
 chatbots = [
-    Chatbot("chatbot1", "Alice", "API_KEY_1_HERE"),
-    Chatbot("chatbot2", "Bob", "API_KEY_2_HERE"),
-    Chatbot("chatbot3", "Charlie", "API_KEY_3_HERE"),
-    Chatbot("chatbot4", "David", "API_KEY_4_HERE"),
-    Chatbot("chatbot5", "Eve", "API_KEY_5_HERE"),
-    Chatbot("chatbot6", "Frank", "API_KEY_6_HERE"),
+    Chatbot("chatbot1", "TheAverageUser", openai.api_key, engine_manager.get_engine("chatbot1")),
+    Chatbot("chatbot2", "Telepath", openai.api_key2, engine_manager.get_engine("chatbot2")),
+    Chatbot("chatbot3", "TheFemChar", openai.api_key3, engine_manager.get_engine("chatbot3")),
+    Chatbot("chatbot4", "TheScientist", openai.api_key4, engine_manager.get_engine("chatbot4")),
+    Chatbot("chatbot5", "TheWeirdo", openai.api_key5, engine_manager.get_engine("chatbot5")),
+    Chatbot("chatbot6", "TheUltimateUser", openai.api_key6, engine_manager.get_engine("chatbot6")),
 ]
 
 # Set the first chatbot to be active by default
@@ -64,7 +83,7 @@ def activate_chatbot(chatbot_id):
     active_chatbot = next(chatbot for chatbot in chatbots if chatbot.id == chatbot_id)
     active_chatbot.active = True
 
-# Example usage when user sends a message to the active chatbot
+    # Example usage when user sends a message to the active chatbot
 def send_message(user_input):
     # Get the active chatbot
     active_chatbot = next(chatbot for chatbot in chatbots if chatbot.active)
@@ -73,6 +92,8 @@ def send_message(user_input):
     response = active_chatbot.generate_response(user_input)
     
     return response
+
+
 
 # Uncomment this code and replace the API keys with your own
 # if you want to use the openai_secret_manager to retrieve your API keys which you 100% do.
