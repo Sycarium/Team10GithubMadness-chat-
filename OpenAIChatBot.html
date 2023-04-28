@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OpenAI Chatbot</title>
+</head>
+<body>
+	<h1>OpenAI Chatbot</h1>
+	<p>Enter your message and click the "Send" button:</p>
+	<input type="text" id="user-input">
+	<button onclick="sendMessage()">Send</button>
+	<p>Response:</p>
+	<div id="response"></div>
+	<script>
+		function sendMessage() {
+			// Get the user input from the text field
+			var userInput = document.getElementById("user-input").value;
+
+			// Call the send_message function and get the response
+			var response = send_message(userInput);
+
+			// Update the response text in the HTML
+			document.getElementById("response").innerHTML = response;
+		}
+	</script>
+</body>
+</html>
